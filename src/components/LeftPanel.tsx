@@ -8,7 +8,7 @@ export default function LeftPanel({ menuOpen, setMenuOpen, tracks, setTracks, se
     setSelectedTrack: (track: TRACK_TYPE | null) => void
 }) {
     const addTrackDay = () => {
-        setTracks([...tracks, { id: Math.random().toString(36), date: null, name: 'Pending' }])
+        setTracks([...tracks, { id: Math.random().toString(36), date: null, name: 'Pending', messages: [] }])
     }
     const openTrack = (track: TRACK_TYPE) => {
         setSelectedTrack(track)
