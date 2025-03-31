@@ -1,16 +1,34 @@
 import { X, Plus } from "lucide-react";
-import { TRACK_TYPE } from "./Track";
+import { RoleEnum, TrackType } from "../types";
+
 export default function LeftPanel({ menuOpen, setMenuOpen, tracks, setTracks, setSelectedTrack }: {
     menuOpen: boolean,
     setMenuOpen: (state: boolean) => void,
-    tracks: Array<TRACK_TYPE>,
-    setTracks: (tracks: Array<TRACK_TYPE>) => void,
-    setSelectedTrack: (track: TRACK_TYPE | null) => void
+    tracks: Array<TrackType>,
+    setTracks: (tracks: Array<TrackType>) => void,
+    setSelectedTrack: (track: TrackType | null) => void
 }) {
     const addTrackDay = () => {
-        setTracks([...tracks, { id: Math.random().toString(36), date: null, name: 'Pending', messages: [] }])
+        setTracks([...tracks, { 
+            id: Math.random().toString(36), 
+            date: null, 
+            name: 'Pending', 
+            messages: [
+                {role: RoleEnum.SYSTEM, content: `
+                        Tienes dos objetivos.
+                        El primero es saber el día, mes y año.
+                        No podemos avanzar en el objetivo 2, hasta que cumplamos el objetivo 1.
+
+                        Objetivo 2, saber que ha comido a lo largo de ese día.
+
+                        No menciones que tienes dos objetivos.
+                        Habla con naturalidad, diciendo que antes de continuar, necesitas saber de que día vais a hablar.
+                        Insiste hasta conseguir el día, mes y año.
+                    `}
+            ] 
+        }])
     }
-    const openTrack = (track: TRACK_TYPE) => {
+    const openTrack = (track: TrackType) => {
         setSelectedTrack(track)
     }
     return (
