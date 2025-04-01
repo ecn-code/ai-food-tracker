@@ -30,4 +30,20 @@ export class OllamaService implements AIService {
     
         return await response.json();
     }
+
+    async generate(prompt: string): Promise<{response: string}> {
+        console.debug("OllamaService.generate", prompt);
+        const response = await fetch(`${this.OLLAMA_API}/api/generate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                model: this.MODEL,
+                prompt,
+                stream: false,
+            }),
+        });
+        console.debug("Response from generate", response);
+    
+        return await response.json();
+    }
 }

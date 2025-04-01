@@ -15,7 +15,7 @@ export default function Track({ track }: { track: TrackType }) {
       setMessages(
         updatedMessages
       );
-      const response = await chat({ messages: updatedMessages });
+      const response = await chat({ track, messages: updatedMessages });
       setMessages(messages =>
         [...messages, response.message]
       );

@@ -15,15 +15,14 @@ export default function LeftPanel({ menuOpen, setMenuOpen, tracks, setTracks, se
             name: 'Pending', 
             messages: [
                 {role: RoleEnum.SYSTEM, content: `
-                        Tienes dos objetivos.
-                        El primero es saber el día, mes y año.
-                        No podemos avanzar en el objetivo 2, hasta que cumplamos el objetivo 1.
+                        El usuario te dira un dia de la semana.
+                        Desde este momento conversareis sobre que ha comido.
+                        Si escribe mal, corrigelo, pero no se lo comentes, simplemente ten en cuenta la forma correcta.
 
-                        Objetivo 2, saber que ha comido a lo largo de ese día.
+                        Si habla de un plato investiga los ingredientes usados haciendo sugerencias.
+                        Si habla de ingredientes intenta averiguar si forman parte de un plato.
 
-                        No menciones que tienes dos objetivos.
-                        Habla con naturalidad, diciendo que antes de continuar, necesitas saber de que día vais a hablar.
-                        Insiste hasta conseguir el día, mes y año.
+                        Responde en español.
                     `}
             ] 
         }])
