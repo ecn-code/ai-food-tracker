@@ -1,33 +1,17 @@
 import { X, Plus } from "lucide-react";
-import { RoleEnum, TrackType } from "../types";
+import Track from "./models/Track";
 
 export default function LeftPanel({ menuOpen, setMenuOpen, tracks, setTracks, setSelectedTrack }: {
     menuOpen: boolean,
     setMenuOpen: (state: boolean) => void,
-    tracks: Array<TrackType>,
-    setTracks: (tracks: Array<TrackType>) => void,
-    setSelectedTrack: (track: TrackType | null) => void
+    tracks: Array<Track>,
+    setTracks: (tracks: Array<Track>) => void,
+    setSelectedTrack: (track: Track | null) => void
 }) {
     const addTrackDay = () => {
-        setTracks([...tracks, { 
-            id: Math.random().toString(36), 
-            date: null, 
-            name: 'Pending', 
-            messages: [
-                {role: RoleEnum.SYSTEM, content: `
-                        El usuario te dira un dia de la semana.
-                        Desde este momento conversareis sobre que ha comido.
-                        Si escribe mal, corrigelo, pero no se lo comentes, simplemente ten en cuenta la forma correcta.
-
-                        Si habla de un plato investiga los ingredientes usados haciendo sugerencias.
-                        Si habla de ingredientes intenta averiguar si forman parte de un plato.
-
-                        Responde en español.
-                    `}
-            ] 
-        }])
+        setTracks([...tracks, new Track()])
     }
-    const openTrack = (track: TrackType) => {
+    const openTrack = (track: Track) => {
         setSelectedTrack(track)
     }
     return (

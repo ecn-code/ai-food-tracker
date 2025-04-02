@@ -1,6 +1,6 @@
-import { AIMessageType } from "../../types";
+import { AIMessageType, AIResponseType } from "../../types";
 
 export interface AIService {
-    chat(messages: Array<AIMessageType>): Promise<{message: AIMessageType}>;
+    chat(messages: Array<AIMessageType>): Promise<AIResponseType>;
     generate(prompt: string): Promise<{response: string}>;
 }

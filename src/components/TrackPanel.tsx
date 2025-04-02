@@ -1,8 +1,11 @@
 import { KeyboardEvent, useState, useRef, useEffect } from "react";
-import chat from "../services/chat-service";
-import { RoleEnum, TrackType } from "../types";
+import { RoleEnum } from "../types";
+import { Context } from "../services/ai/agent/context";
+import { OllamaService } from "../services/ai/ollama-service";
+import Track from "./models/Track";
 
-export default function Track({ track }: { track: TrackType }) {
+export default function TrackPanel({ track }: { track: Track }) {
+  const context = new Context(new OllamaService(), track);
   const [text, setText] = useState('');
   const [messages, setMessages] = useState(track.messages);
   const [disabled, setDisabled] = useState(false);
@@ -15,7 +18,8 @@ export default function Track({ track }: { track: TrackType }) {
       setMessages(
         updatedMessages
       );
-      const response = await chat({ track, messages: updatedMessages });
+      context.track.messages = updatedMessages;
+      const response = await context.run();
       setMessages(messages =>
         [...messages, response.message]
       );
