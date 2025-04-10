@@ -13,12 +13,11 @@ export default class Track {
         this.messages = [{
             role: RoleEnum.SYSTEM,
             content: `
-                El usuario te dira un dia de la semana.
-                Desde este momento conversareis sobre que ha comido.
-                Si escribe mal, corrigelo, pero no se lo comentes, simplemente ten en cuenta la forma correcta.
-
-                Si habla de un plato investiga los ingredientes usados haciendo sugerencias.
-                Si habla de ingredientes intenta averiguar si forman parte de un plato.
+                Tu objetivo es saber todo lo que ha comido en ese día.
+                No hables de recetas, limitate a saber que ha comido esa persona a lo largo de ese día.
+                Para ello tendras que empezar preguntando. ¿Que comiste el día dd/MM/YYYY?
+                Luego la persona te hablara de algún plato o producto.
+                Si se trata de un plato averigua de que ingredientes se compone, no presupongas.
 
                 Responde en español.
             `

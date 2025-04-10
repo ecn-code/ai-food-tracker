@@ -31,6 +31,7 @@ export class RetrieveDateState implements State {
                 console.debug("OllamaService date: ", response.date);
                 return this.context.aiService.chat(this.context.track.messages);
             } else {
+                //TODO: Hacer que la IA con los mensajes anteriores de una respuesta personalizada
                 return Promise.resolve({ message: { role: RoleEnum.ASSISTANTE, content: "Necesitamos saber el día para el cual vamos a guardar esta información." } });
             }
         }

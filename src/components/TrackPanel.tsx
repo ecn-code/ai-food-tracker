@@ -37,21 +37,23 @@ export default function TrackPanel({ track }: { track: Track }) {
 
   return (
     <section className="flex flex-col items-center bg-white shadow-lg rounded-lg w-full h-full transition-all border border-gray-200 p-4">
-      <div className={`flex flex-1 flex-col overflow-y-auto ${messages.length == 0 ? 'max-h-[calc(34vh)]' : 'max-h-[calc(68vh)]'} w-full`}>
-        <div className="flex flex-col gap-2 flex-1">
-          {messages.map((message, index) => (
-            <p
-              key={index}
-              className={`p-2 rounded max-w-[75%] ${message.role === 'user' ? 'bg-blue-500 text-white self-end' : 'bg-gray-100 text-black self-start'}`}
-            >
-              {message.content}
-            </p>
-          ))}
-          <div ref={messagesEndRef} />
+      {messages.length > 1 && (
+        <div className={`flex flex-1 flex-col overflow-y-auto ${messages.length == 0 ? 'max-h-[calc(34vh)]' : 'max-h-[calc(68vh)]'} w-full`}>
+          <div className="flex flex-col gap-2 flex-1">
+            {messages.slice(1).map((message, index) => (
+              <p
+                key={index}
+                className={`p-2 rounded max-w-[75%] ${message.role === 'user' ? 'bg-blue-500 text-white self-end' : 'bg-gray-100 text-black self-start'}`}
+              >
+                {message.content}
+              </p>
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
         </div>
-      </div>
+      )}
 
-      {messages.length === 0 && (
+      {messages.length === 1 && (
         <h2 className="text-xl font-bold mb-4 text-center">
           Describe la comida de un día y yo te ayudaré a analizar los valores nutricionales.
         </h2>
