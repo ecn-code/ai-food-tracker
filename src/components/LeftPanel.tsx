@@ -1,18 +1,25 @@
 import { X, Plus } from "lucide-react";
 import Track from "./models/Track";
 
-export default function LeftPanel({ menuOpen, setMenuOpen, tracks, setTracks, setSelectedTrack }: {
+export default function LeftPanel({ menuOpen, setMenuOpen, tracks, setTracks, selectedTrack, setSelectedTrack }: {
     menuOpen: boolean,
     setMenuOpen: (state: boolean) => void,
     tracks: Array<Track>,
     setTracks: (tracks: Array<Track>) => void,
+    selectedTrack: Track | null,
     setSelectedTrack: (track: Track | null) => void
 }) {
     const addTrackDay = () => {
-        setTracks([...tracks, new Track()])
+        const newTrack = new Track();
+        setTracks([...tracks, newTrack]);
+        openTrack(newTrack);
     }
     const openTrack = (track: Track) => {
-        setSelectedTrack(track)
+        if (selectedTrack) {
+            selectedTrack.selected = false;
+        }
+        track.selected = true;
+        setSelectedTrack(track);
     }
     return (
         <aside
@@ -42,7 +49,7 @@ export default function LeftPanel({ menuOpen, setMenuOpen, tracks, setTracks, se
                     {
                         tracks.map((track) => {
                             return (
-                                <a onClick={() => openTrack(track)} key={track.id} href="#" className="block p-2 rounded hover:bg-gray-700 transition-colors">{track.name}</a>
+                                <a onClick={() => openTrack(track)} key={track.id} href="#" className={`block p-2 rounded ${track.selected ? 'bg-gray-500' : ''} hover:bg-gray-700 transition-colors`}>{track.name}</a>
                             )
                         })
                     }

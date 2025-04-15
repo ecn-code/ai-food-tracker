@@ -12,7 +12,7 @@ export default function Layout() {
   return (
     <div className="flex flex-col h-screen">
       <div className="flex flex-1">
-        <LeftPanel menuOpen={menuOpen} setMenuOpen={setMenuOpen} tracks={tracks} setTracks={setTracks} setSelectedTrack={setSelectedTrack} />
+        <LeftPanel menuOpen={menuOpen} setMenuOpen={setMenuOpen} tracks={tracks} setTracks={setTracks} selectedTrack={selectedTrack} setSelectedTrack={setSelectedTrack} />
         <main className="flex-1 bg-gray-100 p-4 md:p-6 flex flex-col">
           <Header setMenuOpen={setMenuOpen} />
           <div className="mt-6 flex-1">

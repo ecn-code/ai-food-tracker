@@ -10,6 +10,8 @@ export default class RetrieveNutritionalValues implements State {
     }
 
     public async run() {
+        console.debug('Running RetrieveNutritionalValues');
+
         return Promise.resolve({ message: { role: RoleEnum.ASSISTANTE, content: "Gracias por la información. Estamos buscando toda la información nutricional que podras consultar en el dashboard." } });
     }
 }

@@ -1,34 +1,47 @@
 import { KeyboardEvent, useState, useRef, useEffect } from "react";
 import { RoleEnum } from "../types";
-import { Context } from "../services/ai/agent/context";
+import { Context } from "../services/ai/workflow/context";
 import { OllamaService } from "../services/ai/ollama-service";
 import Track from "./models/Track";
 
 export default function TrackPanel({ track }: { track: Track }) {
-  const context = new Context(new OllamaService(), track);
+  const contextRef = useRef(new Context(new OllamaService(), track));
+  const context = contextRef.current;
+
   const [text, setText] = useState('');
-  const [messages, setMessages] = useState(track.messages);
+  const [messages, setMessages] = useState(track.conversation);
   const [disabled, setDisabled] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
   const handleEnterPress = async (event: KeyboardEvent) => {
+    if (disabled) {
+      if (event.key === "Enter") event.preventDefault();
+      return;
+    }
+
     if (event.key === "Enter") {
       event.preventDefault();
-      const updatedMessages = [...messages, { role: RoleEnum.USER, content: text }];
-      setText('')
-      setMessages(
-        updatedMessages
-      );
-      context.track.messages = updatedMessages;
+      const userMessage = { role: RoleEnum.USER, content: text };
+      const updatedMessages = [...messages, userMessage];
+      setText('');
+      setMessages(updatedMessages);
+      context.track.messages.push(userMessage);
+      track.conversation = updatedMessages;
+      setDisabled(true);
       const response = await context.run();
-      setMessages(messages =>
-        [...messages, response.message]
-      );
+      setDisabled(false);
+      setMessages(messages => [...messages, response.message]);
     }
   };
 
   useEffect(() => {
-    setMessages(track.messages)
-    setDisabled(false)
+    setMessages(track.conversation);
+    setDisabled(false);
+    setText('');
+
+    return () => {
+      track.selected = false;
+    };
   }, [track]);
 
   useEffect(() => {
@@ -37,10 +50,10 @@ export default function TrackPanel({ track }: { track: Track }) {
 
   return (
     <section className="flex flex-col items-center bg-white shadow-lg rounded-lg w-full h-full transition-all border border-gray-200 p-4">
-      {messages.length > 1 && (
-        <div className={`flex flex-1 flex-col overflow-y-auto ${messages.length == 0 ? 'max-h-[calc(34vh)]' : 'max-h-[calc(68vh)]'} w-full`}>
+      {messages.length > 0 && (
+        <div className={`flex flex-1 flex-col overflow-y-auto max-h-[calc(68vh)] w-full`}>
           <div className="flex flex-col gap-2 flex-1">
-            {messages.slice(1).map((message, index) => (
+            {messages.map((message, index) => (
               <p
                 key={index}
                 className={`p-2 rounded max-w-[75%] ${message.role === 'user' ? 'bg-blue-500 text-white self-end' : 'bg-gray-100 text-black self-start'}`}
@@ -53,14 +66,13 @@ export default function TrackPanel({ track }: { track: Track }) {
         </div>
       )}
 
-      {messages.length === 1 && (
+      {messages.length === 0 && (
         <h2 className="text-xl font-bold mb-4 text-center">
           Describe la comida de un día y yo te ayudaré a analizar los valores nutricionales.
         </h2>
       )}
 
       <textarea
-        disabled={disabled}
         className="w-full bg-gray-100 p-2 border border-gray-300 rounded resize-none mt-2"
         rows={5}
         value={text}
@@ -68,6 +80,5 @@ export default function TrackPanel({ track }: { track: Track }) {
         onKeyDown={handleEnterPress}
       />
     </section>
-
   );
 }
