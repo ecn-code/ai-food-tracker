@@ -18,11 +18,13 @@ export default class CreateStructuredData implements State {
             content: `
             Haz un json array con los platos y productos comidos en el desayuno en ingles
             Con la siguiente estructura:
-            {
-            "name": "<nombre del producto>", 
-            "weight": <numero en gramos de la cantidad aproximada>, 
-            "description": "<Que ingredientes podria tener ese producto>"
-            }
+            [{
+                "name": "<nombre del producto>",
+                "search": "<nombre por el que podriamos buscarlo en la BD de FoodData Central API | nulo si no podemos>",
+                "ingredients": "<ingredientes que tiene esa preparacion>",
+                "weight": <numero en gramos de la cantidad aproximada>, 
+                "description": "<Que ingredientes podria tener ese producto>"
+            }]
 
             Solo responde con JSON no añadas ningún texto ni formato extra.
             `
@@ -30,6 +32,7 @@ export default class CreateStructuredData implements State {
         const evaluation = await this.context.aiService.chat(this.context.temporalChat);
 
         console.log(evaluation.message);
+        this.context.food = JSON.parse(evaluation.message.content);
 
         return this.context.transitionTo(new RetrieveNutritionalValues(this.context));
     }

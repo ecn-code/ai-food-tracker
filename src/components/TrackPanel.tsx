@@ -6,8 +6,6 @@ import Track from "./models/Track";
 
 export default function TrackPanel({ track }: { track: Track }) {
   const contextRef = useRef(new Context(new OllamaService(), track));
-  const context = contextRef.current;
-
   const [text, setText] = useState('');
   const [messages, setMessages] = useState(track.conversation);
   const [disabled, setDisabled] = useState(false);
@@ -25,10 +23,10 @@ export default function TrackPanel({ track }: { track: Track }) {
       const updatedMessages = [...messages, userMessage];
       setText('');
       setMessages(updatedMessages);
-      context.track.messages.push(userMessage);
+      contextRef.current.track.messages.push(userMessage);
       track.conversation = updatedMessages;
       setDisabled(true);
-      const response = await context.run();
+      const response = await contextRef.current.run();
       setDisabled(false);
       setMessages(messages => [...messages, response.message]);
     }
@@ -38,6 +36,7 @@ export default function TrackPanel({ track }: { track: Track }) {
     setMessages(track.conversation);
     setDisabled(false);
     setText('');
+    contextRef.current = new Context(new OllamaService(), track);
 
     return () => {
       track.selected = false;
