@@ -1,6 +1,6 @@
 import { AIResponseType, RoleEnum } from "../../../../types";
 import { Context } from "../context";
-import AskFoodInformation from "../retrieve-breakfast-food/ask-food-information";
+import AskFoodInformation from "../retrieve-ingredients/ask-food-information";
 import { State } from "../state";
 
 export class RetrieveDateState implements State {

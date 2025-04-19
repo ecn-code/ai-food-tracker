@@ -1,7 +1,7 @@
 import { Context } from "../context";
 import { State } from "../state";
-import AskMoreFoodInformation from "./ask-more-food-information";
-import CheckNoFoodAnswer from "./check-no-food-answer";
+import AskMoreFoodInformation from "./ask-ingredients";
+import CheckNoFoodAnswer from "./checkEnd";
 
 export default class CheckFoodAnswer implements State {
     private context: Context;

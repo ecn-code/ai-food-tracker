@@ -1,22 +1,29 @@
-import Track from "../../../components/models/Track";
 import { AIMessageType } from "../../../types";
 import { AIService } from "../ai-service";
-import { RetrieveDateState } from "./retrieve-date/retrieve-date-state";
+import { EdibleState } from "./edibleState";
+import { IngredientState } from "./ingredientState";
+import AskIngredients from "./retrieve-ingredients/ask-ingredients";
+import CreateStructuredData from "./retrieve-ingredients/create-structured-data";
 import { State } from "./state";
 
 export class Context {
     aiService: AIService;
-    track: Track;
-    state: State;
-    temporalChat: Array<AIMessageType>;
     food: Array<object>;
+    private state: State;
+    private messages: Array<AIMessageType>;
 
-    constructor(aiService: AIService, track: Track) {
-        this.track = track;
+    constructor(aiService: AIService) {
         this.aiService = aiService;
-        this.state = new RetrieveDateState(this);
-        this.temporalChat = [];
+        this.state = new EdibleState(this, 
+            (context: Context) => new IngredientState(
+                context, 
+                (context) => new CreateStructuredData(context),
+                (context) => new AskIngredients(context)
+            ), 
+            null
+        );
         this.food = [];
+        this.messages = [];
     }
 
     run() {
@@ -26,5 +33,17 @@ export class Context {
     transitionTo(state: State) {
         this.state = state;
         return this.run();
+    }
+
+    pushMessage(message: AIMessageType) {
+        this.messages.push(message);
+    }
+
+    getLastMessage(): AIMessageType {
+        return this.messages[this.messages.length - 1];
+    }
+
+    getMessages(): Array<AIMessageType> {
+        return [...this.messages];
     }
 }
