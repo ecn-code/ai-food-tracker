@@ -1,7 +1,7 @@
 import { RoleEnum } from "../../../../types";
 import { Context } from "../context";
 import RetrieveNutritionalValues from "../retrieveNutritionalValues";
-import { State } from "../state";
+import { State } from "../../core/state";
 
 export default class CreateStructuredData implements State {
     private context: Context;

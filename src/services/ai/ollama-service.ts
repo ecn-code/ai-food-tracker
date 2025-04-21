@@ -15,7 +15,7 @@ export class OllamaService implements AIService {
         return OllamaService.instance;
     }
 
-    async chat(messages: Array<AIMessageType>): Promise<{message: AIMessageType}> {
+    async chat(messages: Array<AIMessageType>): Promise<AIMessageType> {
         console.debug("OllamaService.chat", messages);
         const response = await fetch(`${this.OLLAMA_API}/api/chat`, {
             method: 'POST',

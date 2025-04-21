@@ -1,5 +1,5 @@
 import { AIResponseType } from "../../../types";
 
 export interface State {
-    run(): Promise<AIResponseType>;
+    run(): Promise<AIMessageType>;
 }

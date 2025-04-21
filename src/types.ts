@@ -1,12 +1,12 @@
 import { Context } from "./services/ai/workflow/context";
-import { State } from "./services/ai/workflow/state";
+import { State } from "./services/ai/core/state";
 
 export enum RoleEnum {
   SYSTEM = 'system',
   USER = 'user',
-  ASSISTANTE = 'assistant'
+  ASSISTANT = 'assistant'
 };
 
 export type AIMessageType = { role: RoleEnum, content: string };
-export type AIResponseType = { message: AIMessageType };
 export type ConstructorState = (context: Context) => State;
+export type GateBranch = {description: string, state: State};

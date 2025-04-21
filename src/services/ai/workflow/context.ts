@@ -1,32 +1,31 @@
-import { AIMessageType } from "../../../types";
+import { AIMessageType, GateBranch } from "../../../types";
 import { AIService } from "../ai-service";
-import { EdibleState } from "./edibleState";
-import { IngredientState } from "./ingredientState";
-import AskIngredients from "./retrieve-ingredients/ask-ingredients";
-import CreateStructuredData from "./retrieve-ingredients/create-structured-data";
-import { State } from "./state";
+import { AutoTask } from "../core/autoTask";
+import { Gate } from "../core/gate";
+import { State } from "../core/state";
+import { UserInput } from "../core/userInput";
 
 export class Context {
     aiService: AIService;
-    food: Array<object>;
     private state: State;
-    private messages: Array<AIMessageType>;
+    private chat: Array<AIMessageType>;
+    private userMessage: string;
 
     constructor(aiService: AIService) {
         this.aiService = aiService;
-        this.state = new EdibleState(this, 
-            (context: Context) => new IngredientState(
-                context, 
-                (context) => new CreateStructuredData(context),
-                (context) => new AskIngredients(context)
-            ), 
-            null
-        );
-        this.food = [];
-        this.messages = [];
+        this.chat = [];
+        this.userMessage = '';
+
+        const branches = new Map<string, GateBranch>();
+        branches.set("DATE_COMPLETE", {description: "Only if the date includes **explicitly** the **day**, **month**, and **year**. Do not assume any missing parts.", state: new AutoTask("Devolver la fecha en formato dd-mm-yyyy", this)});
+        branches.set("NON_DATE", {description: "Use this if the message does **not** contain a full, explicit date.", state: new AutoTask("¿Por que no es una fecha completa?", this)});
+
+        this.state = new UserInput("Introduce una fecha.", this, 
+            new Gate(this, branches)
+        )
     }
 
-    run() {
+    run(): Promise<AIMessageType> {
         return this.state.run();
     }
 
@@ -35,15 +34,15 @@ export class Context {
         return this.run();
     }
 
-    pushMessage(message: AIMessageType) {
-        this.messages.push(message);
+    setUserMessage(message: string) {
+        this.userMessage = message;
     }
 
-    getLastMessage(): AIMessageType {
-        return this.messages[this.messages.length - 1];
+    getUserMessage() {
+        return this.userMessage;
     }
 
-    getMessages(): Array<AIMessageType> {
-        return [...this.messages];
+    addChat(chat: AIMessageType) {
+        this.chat.push(chat);
     }
 }

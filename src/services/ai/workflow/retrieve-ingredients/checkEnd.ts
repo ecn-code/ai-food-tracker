@@ -1,5 +1,5 @@
 import { Context } from "../context";
-import { State } from "../state";
+import { State } from "../../core/state";
 import AskIngredients from "./ask-ingredients";
 import CreateStructuredData from "./create-structured-data";
 

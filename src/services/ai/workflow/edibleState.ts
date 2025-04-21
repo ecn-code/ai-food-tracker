@@ -1,6 +1,6 @@
 import { AIResponseType, ConstructorState, RoleEnum } from "../../../types";
 import { Context } from "./context";
-import { State } from "./state";
+import { State } from "../core/state";
 
 export class EdibleState implements State {
     private context: Context;
@@ -33,7 +33,7 @@ export class EdibleState implements State {
             return this.context.transitionTo(this.successState(this.context));
         } else {
             //TODO: Improve answer
-            return Promise.resolve({ message: { role: RoleEnum.ASSISTANTE, content: "Escribe un producto o ingrediente." } });
+            return Promise.resolve({ message: { role: RoleEnum.ASSISTANT, content: "Escribe un producto o ingrediente." } });
         }
     }
 }

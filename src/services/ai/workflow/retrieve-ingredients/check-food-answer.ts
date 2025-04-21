@@ -1,5 +1,5 @@
 import { Context } from "../context";
-import { State } from "../state";
+import { State } from "../../core/state";
 import AskMoreFoodInformation from "./ask-ingredients";
 import CheckNoFoodAnswer from "./checkEnd";
 

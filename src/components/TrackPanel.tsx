@@ -21,21 +21,27 @@ export default function TrackPanel({ track }: { track: Track }) {
       event.preventDefault();
       const userMessage = { role: RoleEnum.USER, content: text };
       const updatedMessages = [...messages, userMessage];
+      contextRef.current.setUserMessage(text);
+      await run();
       setText('');
       setMessages(updatedMessages);
-      contextRef.current.pushMessage(userMessage);
       track.conversation = updatedMessages;
-      setDisabled(true);
-      const response = await contextRef.current.run();
-      setDisabled(false);
-      setMessages(messages => [...messages, response.message]);
     }
+  };
+
+  const run = async () => {
+    console.trace('run...')
+    setDisabled(true);
+    const response = await contextRef.current.run();
+    setDisabled(false);
+    setMessages(messages => [...messages, response]);
   };
 
   useEffect(() => {
     setMessages(track.conversation);
     setDisabled(false);
     setText('');
+
     contextRef.current = new Context(new OllamaService());
 
     return () => {

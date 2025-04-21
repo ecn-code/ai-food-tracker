@@ -1,6 +1,6 @@
 import { RoleEnum } from "../../../types";
 import { Context } from "./context";
-import { State } from "./state";
+import { State } from "../core/state";
 
 export default class RetrieveNutritionalValues implements State {
     private context: Context;
@@ -16,6 +16,6 @@ export default class RetrieveNutritionalValues implements State {
             console.log(element);
         });
 
-        return Promise.resolve({ message: { role: RoleEnum.ASSISTANTE, content: "Gracias por la información. Estamos buscando toda la información nutricional que podras consultar en el dashboard." } });
+        return Promise.resolve({ message: { role: RoleEnum.ASSISTANT, content: "Gracias por la información. Estamos buscando toda la información nutricional que podras consultar en el dashboard." } });
     }
 }

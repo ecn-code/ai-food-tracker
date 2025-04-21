@@ -1,6 +1,6 @@
 import { RoleEnum } from "../../../../types";
 import { Context } from "../context";
-import { State } from "../state";
+import { State } from "../../core/state";
 import CheckFoodAnswer from "./check-food-answer";
 
 export default class AskFoodInformation implements State {
@@ -18,7 +18,7 @@ export default class AskFoodInformation implements State {
 
         if (this.firstTime) {
             //TODO: mensaje más personalizado y distinto cada vez
-            const message = { role: RoleEnum.ASSISTANTE, content: `¿Que desayunaste el día ${this.context.track.date}?` };
+            const message = { role: RoleEnum.ASSISTANT, content: `¿Que desayunaste el día ${this.context.track.date}?` };
             this.context.temporalChat.push(message);
             this.firstTime = false;
             return Promise.resolve({ message });

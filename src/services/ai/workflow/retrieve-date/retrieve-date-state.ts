@@ -1,7 +1,7 @@
 import { AIResponseType, RoleEnum } from "../../../../types";
 import { Context } from "../context";
 import AskFoodInformation from "../retrieve-ingredients/ask-food-information";
-import { State } from "../state";
+import { State } from "../../core/state";
 
 export class RetrieveDateState implements State {
     private context: Context;
@@ -31,7 +31,7 @@ export class RetrieveDateState implements State {
             return this.context.transitionTo(new AskFoodInformation(this.context));
         } else {
             //TODO: Hacer que la IA con los mensajes anteriores de una respuesta personalizada
-            return Promise.resolve({ message: { role: RoleEnum.ASSISTANTE, content: "Necesitamos saber el día para el cual vamos a guardar esta información." } });
+            return Promise.resolve({ message: { role: RoleEnum.ASSISTANT, content: "Necesitamos saber el día para el cual vamos a guardar esta información." } });
         }
     }
 }

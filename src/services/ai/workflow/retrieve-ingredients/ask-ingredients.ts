@@ -1,7 +1,7 @@
 import { RoleEnum } from "../../../../types";
 import { Context } from "../context";
 import { IngredientState } from "../ingredientState";
-import { State } from "../state";
+import { State } from "../../core/state";
 import CheckEnd from "./checkEnd";
 
 export default class AskIngredients
@@ -18,7 +18,7 @@ export default class AskIngredients
         console.debug('Running AskIngredients');
 
         if (this.firstTime) {
-            const message = { role: RoleEnum.ASSISTANTE, content: `¿Que ingredientes tiene?` };
+            const message = { role: RoleEnum.ASSISTANT, content: `¿Que ingredientes tiene?` };
             this.context.pushMessage(message);
             this.firstTime = false;
             return Promise.resolve({ message });

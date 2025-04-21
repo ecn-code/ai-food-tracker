@@ -1,6 +1,6 @@
 import { AIResponseType, ConstructorState } from "../../../types";
 import { Context } from "./context";
-import { State } from "./state";
+import { State } from "../core/state";
 
 export class IngredientState implements State {
     private context: Context;
