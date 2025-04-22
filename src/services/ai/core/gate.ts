@@ -1,4 +1,4 @@
-import { AIMessageType, AIResponseType, GateBranch } from "../../../types";
+import { AIMessageType, GateBranch } from "../../../types";
 import { Context } from "../workflow/context";
 import { Log } from "./log";
 import { State } from "./state";
@@ -47,6 +47,10 @@ export class Gate implements State {
             Log.error("Gate error parsing ", e as Error);
             throw new Error("Error parsing");
         }
+    }
+
+    name(): string {
+        return "Gate";
     }
 
 }

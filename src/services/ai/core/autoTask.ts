@@ -14,6 +14,10 @@ export class AutoTask implements State {
         this.context = context;
         this.nextState = nextState;
     }
+    
+    name(): string {
+        return "AutoTask";
+    }
 
     async run(): Promise<AIMessageType> {
         Log.debug("Running AutoTask");

@@ -1,62 +1,63 @@
 import { KeyboardEvent, useState, useRef, useEffect } from "react";
-import { RoleEnum } from "../types";
+import { AIMessageType, RoleEnum } from "../types";
 import { Context } from "../services/ai/workflow/context";
 import { OllamaService } from "../services/ai/ollama-service";
 import Track from "./models/Track";
 
 export default function TrackPanel({ track }: { track: Track }) {
-  const contextRef = useRef(new Context(new OllamaService()));
+  const contextRef = useRef<Context | null>(null);
   const [text, setText] = useState('');
-  const [messages, setMessages] = useState(track.conversation);
+  const [messages, setMessages] = useState<AIMessageType[]>([]);
   const [disabled, setDisabled] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const hasRunRef = useRef("-1");
 
-  const handleEnterPress = async (event: KeyboardEvent) => {
-    if (disabled) {
-      if (event.key === "Enter") event.preventDefault();
-      return;
-    }
-
-    if (event.key === "Enter") {
-      event.preventDefault();
-      const userMessage = { role: RoleEnum.USER, content: text };
-      const updatedMessages = [...messages, userMessage];
-      contextRef.current.setUserMessage(text);
-      await run();
-      setText('');
-      setMessages(updatedMessages);
-      track.conversation = updatedMessages;
-    }
-  };
-
-  const run = async () => {
-    console.trace('run...')
-    setDisabled(true);
-    const response = await contextRef.current.run();
-    setDisabled(false);
-    setMessages(messages => [...messages, response]);
-  };
-
+  // Ejecutar solo una vez al montar
   useEffect(() => {
-    setMessages(track.conversation);
-    setDisabled(false);
-    setText('');
+    if (hasRunRef.current === track.id.toString()) return;
 
+    console.log('useEffect');
+    hasRunRef.current = track.id.toString();  // Aseguramos que el ID de track sea el mismo
     contextRef.current = new Context(new OllamaService());
+    setMessages(track.conversation);
 
     return () => {
-      track.selected = false;
+      setMessages([]);
+      setDisabled(false);
+      setText('');
+      hasRunRef.current = "-1";
+      contextRef.current = null;
     };
-  }, [track]);
 
+  }, [track.id]); // Dependemos solo de track.id para reinicializar el contexto
+
+  // Scroll automático al final
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const handleEnterPress = async (event: KeyboardEvent) => {
+    if (event.key !== "Enter" || disabled) return;
+
+    event.preventDefault();
+    const userMessage: AIMessageType = { role: RoleEnum.USER, content: text };
+
+    setMessages(prev => [...prev, userMessage]);
+    contextRef.current?.setUserMessage(text);
+    setText('');
+    setDisabled(true);
+
+    console.log('Running state');
+    const response = await contextRef.current!.run();
+    console.log(response)
+    setMessages(prev => [...prev, response]);
+    setDisabled(false);
+  };
+
   return (
     <section className="flex flex-col items-center bg-white shadow-lg rounded-lg w-full h-full transition-all border border-gray-200 p-4">
-      {messages.length > 0 && (
-        <div className={`flex flex-1 flex-col overflow-y-auto max-h-[calc(68vh)] w-full`}>
+      {messages.length > 0 ? (
+        <div className="flex flex-1 flex-col overflow-y-auto max-h-[calc(68vh)] w-full">
           <div className="flex flex-col gap-2 flex-1">
             {messages.map((message, index) => (
               <p
@@ -69,9 +70,7 @@ export default function TrackPanel({ track }: { track: Track }) {
             <div ref={messagesEndRef} />
           </div>
         </div>
-      )}
-
-      {messages.length === 0 && (
+      ) : (
         <h2 className="text-xl font-bold mb-4 text-center">
           Describe la comida de un día y yo te ayudaré a analizar los valores nutricionales.
         </h2>
@@ -83,6 +82,7 @@ export default function TrackPanel({ track }: { track: Track }) {
         value={text}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={handleEnterPress}
+        disabled={disabled}
       />
     </section>
   );

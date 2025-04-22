@@ -1,6 +1,6 @@
 import { Menu } from "lucide-react";
 
-export default function LeftPanel({ setMenuOpen }: { setMenuOpen: (state: boolean) => void }) {
+export default function Header({ setMenuOpen }: { setMenuOpen: (state: boolean) => void }) {
     return (
         <header className="flex justify-between items-center bg-white shadow-lg p-2 md:p-4 rounded-lg w-full transition-all border border-gray-200">
             <button

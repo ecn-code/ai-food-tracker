@@ -2,6 +2,7 @@ import { AIMessageType, GateBranch } from "../../../types";
 import { AIService } from "../ai-service";
 import { AutoTask } from "../core/autoTask";
 import { Gate } from "../core/gate";
+import { Log } from "../core/log";
 import { State } from "../core/state";
 import { UserInput } from "../core/userInput";
 
@@ -12,6 +13,8 @@ export class Context {
     private userMessage: string;
 
     constructor(aiService: AIService) {
+        Log.debug('Context created')
+
         this.aiService = aiService;
         this.chat = [];
         this.userMessage = '';
@@ -26,6 +29,7 @@ export class Context {
     }
 
     run(): Promise<AIMessageType> {
+        Log.debug('Context running state', this.state.name())
         return this.state.run();
     }
 

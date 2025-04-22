@@ -21,11 +21,17 @@ export class UserInput implements State {
         Log.debug("Running UserInput");
 
         if(this.isExecuted) {
-            this.context.transitionTo(this.nextState);
+            Log.debug("->UserInput changing state");
+            return this.context.transitionTo(this.nextState);
         }
 
+        Log.debug("->UserInput sending message");
         this.isExecuted = true;
         return Promise.resolve({role: RoleEnum.ASSISTANT, content: this.text});
+    }
+
+    name(): string {
+        return "UserInput";
     }
     
 }
