@@ -10,22 +10,26 @@ export default function TrackPanel({ track }: { track: Track }) {
   const [messages, setMessages] = useState<AIMessageType[]>([]);
   const [disabled, setDisabled] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const hasRunRef = useRef("-1");
+
+  const run = async () => {
+    console.log('Running state');
+    const response = await contextRef.current!.run();
+    console.log(response)
+    setMessages(prev => [...prev, response]);
+    setDisabled(false);
+  };
 
   // Ejecutar solo una vez al montar
   useEffect(() => {
-    if (hasRunRef.current === track.id.toString()) return;
 
-    console.log('useEffect');
-    hasRunRef.current = track.id.toString();  // Aseguramos que el ID de track sea el mismo
+    console.log('useEffect', track.id);
     contextRef.current = new Context(new OllamaService());
-    setMessages(track.conversation);
+    run();
 
     return () => {
       setMessages([]);
       setDisabled(false);
       setText('');
-      hasRunRef.current = "-1";
       contextRef.current = null;
     };
 
@@ -47,11 +51,7 @@ export default function TrackPanel({ track }: { track: Track }) {
     setText('');
     setDisabled(true);
 
-    console.log('Running state');
-    const response = await contextRef.current!.run();
-    console.log(response)
-    setMessages(prev => [...prev, response]);
-    setDisabled(false);
+    run();
   };
 
   return (

@@ -8,11 +8,11 @@ export class UserInput implements State {
     private context: Context;
     private text: string;
     private isExecuted: boolean;
-    private nextState: State;
-    
-    constructor(text: string, context: Context, nextState: State) {
+    private nextStateName: string;
+
+    constructor(text: string, context: Context, nextStateName: string) {
         this.context = context;
-        this.nextState = nextState;
+        this.nextStateName = nextStateName;
         this.isExecuted = false;
         this.text = text;
     }
@@ -20,18 +20,18 @@ export class UserInput implements State {
     async run(): Promise<AIMessageType> {
         Log.debug("Running UserInput");
 
-        if(this.isExecuted) {
+        if (this.isExecuted) {
             Log.debug("->UserInput changing state");
-            return this.context.transitionTo(this.nextState);
+            return this.context.transitionToByName(this.nextStateName);
         }
 
         Log.debug("->UserInput sending message");
         this.isExecuted = true;
-        return Promise.resolve({role: RoleEnum.ASSISTANT, content: this.text});
+        return Promise.resolve({ role: RoleEnum.ASSISTANT, content: this.text });
     }
 
     name(): string {
         return "UserInput";
     }
-    
+
 }

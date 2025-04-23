@@ -3,16 +3,16 @@ import { Context } from "../workflow/context";
 import { Log } from "./log";
 import { State } from "./state";
 
-export class AutoTask implements State {
+export class AIAutoTask implements State {
 
     private context: Context;
     private prompt: string;
-    private nextState: State | null;
+    private nextStateName: string | null;
 
-    constructor(prompt: string, context: Context, nextState: State | null = null) {
+    constructor(prompt: string, context: Context, nextStateName: string | null) {
         this.prompt = prompt;
         this.context = context;
-        this.nextState = nextState;
+        this.nextStateName = nextStateName;
     }
     
     name(): string {
@@ -30,8 +30,8 @@ export class AutoTask implements State {
         `);
         Log.debug("AutoTask generated message", generatedMessage.response);
 
-        if (this.nextState) {
-            return this.context.transitionTo(this.nextState);
+        if (this.nextStateName) {
+            return this.context.transitionToByName(this.nextStateName);
         }
 
         return Promise.resolve({ role: RoleEnum.ASSISTANT, content: generatedMessage.response });

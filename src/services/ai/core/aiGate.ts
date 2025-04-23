@@ -1,14 +1,14 @@
-import { AIMessageType, GateBranch } from "../../../types";
+import { AIMessageType, BranchDef } from "../../../types";
 import { Context } from "../workflow/context";
 import { Log } from "./log";
 import { State } from "./state";
 
-export class Gate implements State {
+export class AIGate implements State {
 
     private context: Context;
-    private branches: Map<string, GateBranch>;
+    private branches: Map<string, BranchDef>;
 
-    constructor(context: Context, branches: Map<string, GateBranch>) {
+    constructor(context: Context, branches: Map<string, BranchDef>) {
         this.context = context;
         this.branches = branches;
     }
@@ -21,7 +21,7 @@ export class Gate implements State {
             |${this.context.getUserMessage()}|
 
             Evaluate the message: which of these options fits?:
-                [${Array.from(this.branches.entries()).map(entry => `${entry[0]} -> ${entry[1].description}\n`)}]
+                [${Array.from(this.branches.entries()).map(entry => `${entry[0]} -> ${entry[1].checkDescription}\n`)}]
 
             Respond with a JSON object and nothing else:
                 { "option": "<option chosen>" }
@@ -32,18 +32,18 @@ export class Gate implements State {
             const optionChosen = JSON.parse(generatedMessage.response);
             Log.debug("Gate option chosen: ", optionChosen.option);
 
-            if(!optionChosen.option || !this.branches.has(optionChosen.option)) {
+            if (!optionChosen.option || !this.branches.has(optionChosen.option)) {
                 throw new Error("Option not supported");
             }
 
             const branch = this.branches.get(optionChosen.option);
-            if(!branch || !branch.state) {
+            if (!branch || !branch.nextStateName) {
                 throw new Error("Option not supported");
             }
 
-            return this.context.transitionTo(branch.state);
+            return this.context.transitionToByName(branch.nextStateName);
 
-        } catch(e) {
+        } catch (e) {
             Log.error("Gate error parsing ", e as Error);
             throw new Error("Error parsing");
         }
