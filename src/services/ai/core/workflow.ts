@@ -8,13 +8,51 @@ import { UserInput } from "./userInput";
 
 export class WorkFlow {
 
-    private states: State[];
+    private context: Context;
 
-    private constructor(states: State[]) {
-        this.states = states;
+    private constructor(context: Context) {
+        this.context = context;
     }
 
-    static from(states: StateDef[]) {
+    setUserInput(userInput: string) {
+        this.context.setUserMessage(userInput);
+    }
+
+    run() {
+        return this.context.run();
+    }
+
+    static builder(initialStateName: string | null) {
+        return new WorkFlowBuilder(initialStateName);
+    }
+
+    static from(workFlowBuilder: WorkFlowBuilder) {
+        const context = workFlowBuilder.getContext();
+        if (!context) {
+            throw new Error("Error creating workflow");
+
+        }
+
+        return new WorkFlow(context);
+    }
+
+}
+
+class WorkFlowBuilder {
+
+    private context: Context | null;
+    private initialStateName: string | null;
+
+    public constructor(initialStateName: string | null) {
+        this.context = null;
+        this.initialStateName = initialStateName;
+    }
+
+    getContext() {
+        return this.context;
+    }
+
+    states(states: StateDef[]) {
         // Ensure there are no repeated names
         const stateNames = new Set(states.map(state => state.name));
         if (stateNames.size !== states.length) {
@@ -39,26 +77,35 @@ export class WorkFlow {
             }
         });
 
-        const context = new Context(new OllamaService());
+        const createStates = (context: Context) => {
+            const stateMap = new Map<string, State>();
+            states.forEach(state => {
+                let stateInstance: State;
+                switch (state.type) {
+                    case WorkFlowTaskEnum.AI_AUTO_TASK:
+                        stateInstance = new AIAutoTask(state.prompt, context, state.nextStateName);
+                        break;
+                    case WorkFlowTaskEnum.AI_GATE:
+                        stateInstance = new AIGate(context, state.branches);
+                        break;
+                    case WorkFlowTaskEnum.USER_INPUT:
+                        stateInstance = new UserInput(state.feedback, context, state.nextStateName);
+                        break;
+                    default:
+                        throw new Error(`Invalid state: ${state} does not exist in state definitions.`);
+                }
+                stateMap.set(state.name, stateInstance);
+            });
+            return stateMap;
+        };
 
-        const stateInstances: State[] = [];
-        states.forEach(state => {
-            switch (state.type) {
-                case WorkFlowTaskEnum.AI_AUTO_TASK:
-                    stateInstances.push(new AIAutoTask(state.prompt, context, state.nextStateName));
-                    break;
-                case WorkFlowTaskEnum.AI_GATE:
-                    stateInstances.push(new AIGate(context, state.branches));
-                    break;
-                case WorkFlowTaskEnum.USER_INPUT:
-                    stateInstances.push(new UserInput(state.feedback, context, state.nextStateName));
-                    break;
-                default:
-                    throw new Error(`Invalid state: ${state} does not exist in state definitions.`);
-            }
-        });
+        this.context = new Context(new OllamaService(), this.initialStateName, createStates);
 
-        return new WorkFlow(stateInstances);
+        return this;
+    }
+
+    build() {
+        return WorkFlow.from(this);
     }
 
 }

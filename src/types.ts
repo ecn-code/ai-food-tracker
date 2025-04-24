@@ -22,7 +22,7 @@ export type BranchDef = {
 };
 type BaseState = {
   name: string;
-  nextStateName: string;
+  nextStateName: string | null;
 };
 type AIBaseState = BaseState & {
   prompt: string;

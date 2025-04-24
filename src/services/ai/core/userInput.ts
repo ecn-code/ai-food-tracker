@@ -10,7 +10,11 @@ export class UserInput implements State {
     private isExecuted: boolean;
     private nextStateName: string;
 
-    constructor(text: string, context: Context, nextStateName: string) {
+    constructor(text: string, context: Context, nextStateName: string | null) {
+        if(!nextStateName) {
+            throw new Error("UserInput nextState cannot be null");
+        }
+        
         this.context = context;
         this.nextStateName = nextStateName;
         this.isExecuted = false;

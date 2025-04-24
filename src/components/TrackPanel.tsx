@@ -1,11 +1,10 @@
 import { KeyboardEvent, useState, useRef, useEffect } from "react";
-import { AIMessageType, RoleEnum } from "../types";
-import { Context } from "../services/ai/workflow/context";
-import { OllamaService } from "../services/ai/ollama-service";
+import { AIMessageType, RoleEnum, WorkFlowTaskEnum } from "../types";
 import Track from "./models/Track";
+import { WorkFlow } from "../services/ai/core/workflow";
 
 export default function TrackPanel({ track }: { track: Track }) {
-  const contextRef = useRef<Context | null>(null);
+  const workflowRef = useRef<WorkFlow | null>(null);
   const [text, setText] = useState('');
   const [messages, setMessages] = useState<AIMessageType[]>([]);
   const [disabled, setDisabled] = useState(false);
@@ -13,7 +12,7 @@ export default function TrackPanel({ track }: { track: Track }) {
 
   const run = async () => {
     console.log('Running state');
-    const response = await contextRef.current!.run();
+    const response = await workflowRef.current!.run();
     console.log(response)
     setMessages(prev => [...prev, response]);
     setDisabled(false);
@@ -23,14 +22,20 @@ export default function TrackPanel({ track }: { track: Track }) {
   useEffect(() => {
 
     console.log('useEffect', track.id);
-    contextRef.current = new Context(new OllamaService());
+    workflowRef.current = WorkFlow.builder('start')
+    .states([
+      {type: WorkFlowTaskEnum.USER_INPUT, feedback: "Hola", name: "start", nextStateName: 'final'},
+      {type: WorkFlowTaskEnum.AI_AUTO_TASK, prompt: "Interpreta el mensaje, que ha querido decir", name: "final", nextStateName: null},
+    ])
+    .build();
+
     run();
 
     return () => {
       setMessages([]);
       setDisabled(false);
       setText('');
-      contextRef.current = null;
+      workflowRef.current = null;
     };
 
   }, [track.id]); // Dependemos solo de track.id para reinicializar el contexto
@@ -47,7 +52,7 @@ export default function TrackPanel({ track }: { track: Track }) {
     const userMessage: AIMessageType = { role: RoleEnum.USER, content: text };
 
     setMessages(prev => [...prev, userMessage]);
-    contextRef.current?.setUserMessage(text);
+    workflowRef.current?.setUserInput(text);
     setText('');
     setDisabled(true);
 
