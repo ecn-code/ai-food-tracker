@@ -16,29 +16,30 @@ export enum WorkFlowTaskEnum {
   AI_GATE = 'AIGate',
   AI_AUTO_TASK = 'AIAutoTask'
 };
-export type BranchDef = {
-  nextStateName: string;
+export type BranchDef = NextState & {
   checkDescription: string;
 };
 type BaseState = {
   name: string;
+};
+type NextState = {
   nextStateName: string | null;
 };
 type AIBaseState = BaseState & {
   prompt: string;
 };
 
-type UserInputState = BaseState & {
+type UserInputState = BaseState & NextState & {
   type: WorkFlowTaskEnum.USER_INPUT;
   feedback: string;
 };
 
 type AIGateState = AIBaseState & {
   type: WorkFlowTaskEnum.AI_GATE;
-  branches: Map<string, BranchDef>;
+  branches: Record<string, BranchDef>;
 };
 
-type AIAutoTaskState = AIBaseState & {
+type AIAutoTaskState = AIBaseState & NextState & {
   type: WorkFlowTaskEnum.AI_AUTO_TASK;
 };
 

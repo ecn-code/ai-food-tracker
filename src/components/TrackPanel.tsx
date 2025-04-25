@@ -24,8 +24,14 @@ export default function TrackPanel({ track }: { track: Track }) {
     console.log('useEffect', track.id);
     workflowRef.current = WorkFlow.builder('start')
     .states([
-      {type: WorkFlowTaskEnum.USER_INPUT, feedback: "Hola", name: "start", nextStateName: 'final'},
-      {type: WorkFlowTaskEnum.AI_AUTO_TASK, prompt: "Interpreta el mensaje, que ha querido decir", name: "final", nextStateName: null},
+      {type: WorkFlowTaskEnum.USER_INPUT, feedback: "Introduce una fecha", name: "start", nextStateName: 'VALIDAR'},
+      {type: WorkFlowTaskEnum.AI_GATE, prompt: "Valida si es o no una fecha", name: "VALIDAR", branches: {
+        "DATE": {checkDescription: "Hay una fecha completa", nextStateName: "OK"},
+        "NON_DATE": {checkDescription: "A la fecha le falta el dia, el mes o el año, o no es una fecha", nextStateName: "FAIL"}
+      }
+      },
+      {type: WorkFlowTaskEnum.AI_AUTO_TASK, prompt: "¿Por que ha fallado?", name: "FAIL", nextStateName: null},
+      {type: WorkFlowTaskEnum.AI_AUTO_TASK, prompt: "Fecha en formato dd/mm/yyyy", name: "OK", nextStateName: null},
     ])
     .build();
 

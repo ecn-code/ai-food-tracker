@@ -1,4 +1,4 @@
-import { StateDef, WorkFlowTaskEnum } from "../../../types";
+import { BranchDef, StateDef, WorkFlowTaskEnum } from "../../../types";
 import { OllamaService } from "../ollama-service";
 import { Context } from "../workflow/context";
 import { AIAutoTask } from "./aiAutoTask";
@@ -63,7 +63,7 @@ class WorkFlowBuilder {
         const withoutDependency = '<<>>';
         const dependencyGraph = new Map<string, string[]>();
         states.forEach(state => {
-            const nextState = state.nextStateName || withoutDependency;
+            const nextState = (state as { nextStateName?: string }).nextStateName || withoutDependency;
             if (!dependencyGraph.has(nextState)) {
                 dependencyGraph.set(nextState, []);
             }
@@ -86,7 +86,7 @@ class WorkFlowBuilder {
                         stateInstance = new AIAutoTask(state.prompt, context, state.nextStateName);
                         break;
                     case WorkFlowTaskEnum.AI_GATE:
-                        stateInstance = new AIGate(context, state.branches);
+                        stateInstance = new AIGate(context, new Map<string, BranchDef>(Object.entries(state.branches)));
                         break;
                     case WorkFlowTaskEnum.USER_INPUT:
                         stateInstance = new UserInput(state.feedback, context, state.nextStateName);
