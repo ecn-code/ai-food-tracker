@@ -22,16 +22,15 @@ export default function TrackPanel({ track }: { track: Track }) {
   useEffect(() => {
 
     console.log('useEffect', track.id);
-    workflowRef.current = WorkFlow.builder('start')
+    workflowRef.current = WorkFlow.builder('START')
     .states([
-      {type: WorkFlowTaskEnum.USER_INPUT, feedback: "Introduce una fecha", name: "start", nextStateName: 'VALIDAR'},
-      {type: WorkFlowTaskEnum.AI_GATE, prompt: "Valida si es o no una fecha", name: "VALIDAR", branches: {
-        "DATE": {checkDescription: "Hay una fecha completa", nextStateName: "OK"},
-        "NON_DATE": {checkDescription: "A la fecha le falta el dia, el mes o el año, o no es una fecha", nextStateName: "FAIL"}
+      {type: WorkFlowTaskEnum.USER_INPUT, feedback: "Introduce un ingrediente", name: "START", nextStateName: 'VALIDAR'},
+      {type: WorkFlowTaskEnum.AI_GATE, prompt: "¿Es un ingrediente?", name: "VALIDAR", branches: {
+        "INGREDIENT": {checkDescription: "Es un ingrediente", nextStateName: "IS_INGREDIENT"},
+        "NON_INGREDIENT": {checkDescription: "No es un ingrediente", nextStateName: "START"}
       }
       },
-      {type: WorkFlowTaskEnum.AI_AUTO_TASK, prompt: "¿Por que ha fallado?", name: "FAIL", nextStateName: null},
-      {type: WorkFlowTaskEnum.AI_AUTO_TASK, prompt: "Fecha en formato dd/mm/yyyy", name: "OK", nextStateName: null},
+      {type: WorkFlowTaskEnum.AI_AUTO_TASK, prompt: "Traduce el nombre en ingles, solo devuelve el nombre nada más", name: "IS_INGREDIENT", nextStateName: null},
     ])
     .build();
 

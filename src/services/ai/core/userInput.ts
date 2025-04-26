@@ -25,7 +25,8 @@ export class UserInput implements State {
         Log.debug("Running UserInput");
 
         if (this.isExecuted) {
-            Log.debug("->UserInput changing state");
+            Log.debug("->UserInput changing state", this.context.getUserMessage());
+            this.isExecuted = false;
             return this.context.transitionToByName(this.nextStateName);
         }
 
