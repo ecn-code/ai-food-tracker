@@ -1,22 +1,20 @@
-import { AIMessageType, RoleEnum } from "../../../types";
+import { AIAutoTaskState, AIMessageType, RoleEnum, StateDef } from "../../../types";
 import { Context } from "../workflow/context";
 import { Log } from "./log";
 import { State } from "./state";
 
-export class AIAutoTask implements State {
+export class AIAutoTask extends State {
 
-    private context: Context;
     private prompt: string;
     private nextStateName: string | null;
 
-    constructor(prompt: string, context: Context, nextStateName: string | null) {
-        this.prompt = prompt;
+    constructor(stateDef: StateDef, context: Context) {
+        super(stateDef, context);
+
+        const aiAutoTaskDef = stateDef as AIAutoTaskState;
+        this.prompt = aiAutoTaskDef.prompt;
         this.context = context;
-        this.nextStateName = nextStateName;
-    }
-    
-    name(): string {
-        return "AutoTask";
+        this.nextStateName = aiAutoTaskDef.nextStateName;
     }
 
     async run(): Promise<AIMessageType> {

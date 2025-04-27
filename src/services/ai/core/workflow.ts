@@ -1,4 +1,4 @@
-import { BranchDef, StateDef, WorkFlowTaskEnum } from "../../../types";
+import { BranchDef, Constructor, StateDef, WorkFlowTaskEnum } from "../../../types";
 import { OllamaService } from "../ollama-service";
 import { Context } from "../workflow/context";
 import { AIAutoTask } from "./aiAutoTask";
@@ -42,10 +42,20 @@ class WorkFlowBuilder {
 
     private context: Context | null;
     private initialStateName: string | null;
+    private definedStates: Map<string, Constructor<State>>;
 
     public constructor(initialStateName: string | null) {
         this.context = null;
         this.initialStateName = initialStateName;
+
+        this.definedStates = new Map();
+        this.registerState(WorkFlowTaskEnum.AI_AUTO_TASK.toString(), AIAutoTask);
+        this.registerState(WorkFlowTaskEnum.AI_GATE.toString(), AIGate);
+        this.registerState(WorkFlowTaskEnum.USER_INPUT.toString(), UserInput);
+    }
+
+    registerState(type: string, clazz: Constructor<State>) {
+        this.definedStates.set(type, clazz);
     }
 
     getContext() {
@@ -80,21 +90,12 @@ class WorkFlowBuilder {
         const createStates = (context: Context) => {
             const stateMap = new Map<string, State>();
             states.forEach(state => {
-                let stateInstance: State;
-                switch (state.type) {
-                    case WorkFlowTaskEnum.AI_AUTO_TASK:
-                        stateInstance = new AIAutoTask(state.prompt, context, state.nextStateName);
-                        break;
-                    case WorkFlowTaskEnum.AI_GATE:
-                        stateInstance = new AIGate(context, new Map<string, BranchDef>(Object.entries(state.branches)));
-                        break;
-                    case WorkFlowTaskEnum.USER_INPUT:
-                        stateInstance = new UserInput(state.feedback, context, state.nextStateName);
-                        break;
-                    default:
-                        throw new Error(`Invalid state: ${state} does not exist in state definitions.`);
+                const clazz = this.definedStates.get(state.type);
+                if(!clazz) {
+                    throw new Error(`${state.type} not supported`);
                 }
-                stateMap.set(state.name, stateInstance);
+
+                stateMap.set(state.name, new clazz(state, context));
             });
             return stateMap;
         };

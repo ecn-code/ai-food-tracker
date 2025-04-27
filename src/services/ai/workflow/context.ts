@@ -29,7 +29,7 @@ export class Context {
             throw new Error("There is no state to run");
         }
 
-        Log.debug('Context running state', this.state.name())
+        Log.debug('Context running state', this.state.constructor.name)
         return this.state.run();
     }
 

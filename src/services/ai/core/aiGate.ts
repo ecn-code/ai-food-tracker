@@ -1,16 +1,17 @@
-import { AIMessageType, BranchDef } from "../../../types";
+import { AIGateState, AIMessageType, BranchDef, StateDef } from "../../../types";
 import { Context } from "../workflow/context";
 import { Log } from "./log";
 import { State } from "./state";
 
-export class AIGate implements State {
+export class AIGate extends State {
 
-    private context: Context;
     private branches: Map<string, BranchDef>;
 
-    constructor(context: Context, branches: Map<string, BranchDef>) {
-        this.context = context;
-        this.branches = branches;
+    constructor(stateDef: StateDef, context: Context) {
+        super(stateDef, context);
+
+        const aiGateDef = stateDef as AIGateState;
+        this.branches = new Map<string, BranchDef>(Object.entries(aiGateDef.branches));
     }
 
     async run(): Promise<AIMessageType> {

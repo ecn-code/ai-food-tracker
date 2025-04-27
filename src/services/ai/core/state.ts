@@ -1,6 +1,13 @@
-import { AIMessageType } from "../../../types";
+import { AIMessageType, StateDef } from "../../../types";
+import { Context } from "../workflow/context";
 
-export interface State {
-    run(): Promise<AIMessageType>;
-    name(): string;
+export abstract class State {
+    
+    protected context: Context;
+
+    constructor(stateDef: StateDef, context: Context) {
+        this.context = context;
+    }
+
+    abstract run(): Promise<AIMessageType>;
 }

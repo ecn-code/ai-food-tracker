@@ -8,7 +8,7 @@ export enum RoleEnum {
 };
 
 export type AIMessageType = { role: RoleEnum, content: string };
-export type ConstructorState = (context: Context) => State;
+export type Constructor<T extends State> = new (state: StateDef, context: Context) => T;
 
 
 export enum WorkFlowTaskEnum {
@@ -29,17 +29,17 @@ type AIBaseState = BaseState & {
   prompt: string;
 };
 
-type UserInputState = BaseState & NextState & {
+export type UserInputState = BaseState & NextState & {
   type: WorkFlowTaskEnum.USER_INPUT;
   feedback: string;
 };
 
-type AIGateState = AIBaseState & {
+export type AIGateState = AIBaseState & {
   type: WorkFlowTaskEnum.AI_GATE;
   branches: Record<string, BranchDef>;
 };
 
-type AIAutoTaskState = AIBaseState & NextState & {
+export type AIAutoTaskState = AIBaseState & NextState & {
   type: WorkFlowTaskEnum.AI_AUTO_TASK;
 };
 

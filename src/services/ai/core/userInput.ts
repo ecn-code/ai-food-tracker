@@ -1,24 +1,25 @@
-import { AIMessageType, RoleEnum } from "../../../types";
+import { AIMessageType, RoleEnum, StateDef, UserInputState } from "../../../types";
 import { Context } from "../workflow/context";
 import { Log } from "./log";
 import { State } from "./state";
 
-export class UserInput implements State {
+export class UserInput extends State {
 
-    private context: Context;
     private text: string;
     private isExecuted: boolean;
     private nextStateName: string;
 
-    constructor(text: string, context: Context, nextStateName: string | null) {
-        if(!nextStateName) {
+    constructor(stateDef: StateDef, context: Context) {
+        super(stateDef, context);
+
+        const userInputState = stateDef as UserInputState;
+        if(!userInputState.nextStateName) {
             throw new Error("UserInput nextState cannot be null");
         }
         
-        this.context = context;
-        this.nextStateName = nextStateName;
+        this.nextStateName = userInputState.nextStateName;
         this.isExecuted = false;
-        this.text = text;
+        this.text = userInputState.feedback;
     }
 
     async run(): Promise<AIMessageType> {
@@ -33,10 +34,6 @@ export class UserInput implements State {
         Log.debug("->UserInput sending message");
         this.isExecuted = true;
         return Promise.resolve({ role: RoleEnum.ASSISTANT, content: this.text });
-    }
-
-    name(): string {
-        return "UserInput";
     }
 
 }
