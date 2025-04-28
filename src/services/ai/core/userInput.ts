@@ -33,7 +33,10 @@ export class UserInput extends State {
 
         Log.debug("->UserInput sending message");
         this.isExecuted = true;
-        return Promise.resolve({ role: RoleEnum.ASSISTANT, content: this.text });
+        const message = { role: RoleEnum.ASSISTANT, content: this.text };
+        this.context.addChat(message);
+        
+        return Promise.resolve(message);
     }
 
 }

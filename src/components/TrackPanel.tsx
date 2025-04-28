@@ -2,6 +2,7 @@ import { KeyboardEvent, useState, useRef, useEffect } from "react";
 import { AIMessageType, RoleEnum, WorkFlowTaskEnum } from "../types";
 import Track from "./models/Track";
 import { WorkFlow } from "../services/ai/core/workflow";
+import { GetIngredientInformation } from "../services/ai/getIngredientInformation";
 
 export default function TrackPanel({ track }: { track: Track }) {
   const workflowRef = useRef<WorkFlow | null>(null);
@@ -23,6 +24,7 @@ export default function TrackPanel({ track }: { track: Track }) {
 
     console.log('useEffect', track.id);
     workflowRef.current = WorkFlow.builder('START')
+    .registerState("GetIngredientInformation", GetIngredientInformation)
     .states([
       {type: WorkFlowTaskEnum.USER_INPUT, feedback: "Introduce un ingrediente", name: "START", nextStateName: 'VALIDAR'},
       {type: WorkFlowTaskEnum.AI_GATE, prompt: "¿Es un ingrediente?", name: "VALIDAR", branches: {
@@ -30,7 +32,8 @@ export default function TrackPanel({ track }: { track: Track }) {
         "NON_INGREDIENT": {checkDescription: "No es un ingrediente", nextStateName: "START"}
       }
       },
-      {type: WorkFlowTaskEnum.AI_AUTO_TASK, prompt: "Traduce el nombre en ingles, solo devuelve el nombre nada más", name: "IS_INGREDIENT", nextStateName: null},
+      {type: WorkFlowTaskEnum.AI_AUTO_TASK, prompt: "Traduce el nombre en ingles, solo devuelve el nombre nada más", name: "IS_INGREDIENT", nextStateName: "LAST"},
+      {type: WorkFlowTaskEnum.CUSTOM_TASK, custom_type: "GetIngredientInformation", name: "LAST", nextStateName: null},
     ])
     .build();
 
@@ -74,7 +77,12 @@ export default function TrackPanel({ track }: { track: Track }) {
                 key={index}
                 className={`p-2 rounded max-w-[75%] ${message.role === 'user' ? 'bg-blue-500 text-white self-end' : 'bg-gray-100 text-black self-start'}`}
               >
-                {message.content}
+                {message.content.split('\n').map(text => (
+                  <>
+                    {text}
+                    <br />
+                  </>
+                ))}
               </p>
             ))}
             <div ref={messagesEndRef} />

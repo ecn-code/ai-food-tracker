@@ -54,6 +54,10 @@ export class Context {
         this.chat.push(chat);
     }
 
+    getChat() {
+        return this.chat;
+    }
+
     private getState(stateName: string): State {
         const state = this.states.get(stateName);
         if(state) {

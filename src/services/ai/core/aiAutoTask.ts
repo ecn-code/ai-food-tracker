@@ -27,12 +27,14 @@ export class AIAutoTask extends State {
             ${this.prompt}
         `);
         Log.debug("AutoTask generated message", generatedMessage.response);
-
+        const message = { role: RoleEnum.ASSISTANT, content: generatedMessage.response };
+        this.context.addChat(message);
+        
         if (this.nextStateName) {
             return this.context.transitionToByName(this.nextStateName);
         }
 
-        return Promise.resolve({ role: RoleEnum.ASSISTANT, content: generatedMessage.response });
+        return Promise.resolve(message);
     }
 
 }

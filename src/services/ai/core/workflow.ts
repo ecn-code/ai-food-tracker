@@ -1,4 +1,4 @@
-import { BranchDef, Constructor, StateDef, WorkFlowTaskEnum } from "../../../types";
+import { Constructor, StateDef, WorkFlowTaskEnum } from "../../../types";
 import { OllamaService } from "../ollama-service";
 import { Context } from "../workflow/context";
 import { AIAutoTask } from "./aiAutoTask";
@@ -49,13 +49,14 @@ class WorkFlowBuilder {
         this.initialStateName = initialStateName;
 
         this.definedStates = new Map();
-        this.registerState(WorkFlowTaskEnum.AI_AUTO_TASK.toString(), AIAutoTask);
-        this.registerState(WorkFlowTaskEnum.AI_GATE.toString(), AIGate);
-        this.registerState(WorkFlowTaskEnum.USER_INPUT.toString(), UserInput);
+        this.registerState(WorkFlowTaskEnum.AI_AUTO_TASK.toString(), AIAutoTask)
+        .registerState(WorkFlowTaskEnum.AI_GATE.toString(), AIGate)
+        .registerState(WorkFlowTaskEnum.USER_INPUT.toString(), UserInput);
     }
 
     registerState(type: string, clazz: Constructor<State>) {
         this.definedStates.set(type, clazz);
+        return this;
     }
 
     getContext() {
@@ -90,7 +91,13 @@ class WorkFlowBuilder {
         const createStates = (context: Context) => {
             const stateMap = new Map<string, State>();
             states.forEach(state => {
-                const clazz = this.definedStates.get(state.type);
+                let clazz;
+                if(state.type != WorkFlowTaskEnum.CUSTOM_TASK) {
+                    clazz = this.definedStates.get(state.type);
+                } else {
+                    clazz = this.definedStates.get(state.custom_type);
+                }
+
                 if(!clazz) {
                     throw new Error(`${state.type} not supported`);
                 }

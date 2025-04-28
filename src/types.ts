@@ -14,7 +14,8 @@ export type Constructor<T extends State> = new (state: StateDef, context: Contex
 export enum WorkFlowTaskEnum {
   USER_INPUT = 'UserInput',
   AI_GATE = 'AIGate',
-  AI_AUTO_TASK = 'AIAutoTask'
+  AI_AUTO_TASK = 'AIAutoTask',
+  CUSTOM_TASK = 'CustomTask'
 };
 export type BranchDef = NextState & {
   checkDescription: string;
@@ -39,8 +40,13 @@ export type AIGateState = AIBaseState & {
   branches: Record<string, BranchDef>;
 };
 
+export type CustomTaskState = BaseState & NextState & {
+  type: WorkFlowTaskEnum.CUSTOM_TASK;
+  custom_type: string;
+};
+
 export type AIAutoTaskState = AIBaseState & NextState & {
   type: WorkFlowTaskEnum.AI_AUTO_TASK;
 };
 
-export type StateDef = UserInputState | AIGateState | AIAutoTaskState;
+export type StateDef = UserInputState | AIGateState | AIAutoTaskState | CustomTaskState;
