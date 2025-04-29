@@ -1,10 +1,11 @@
-import { KeyboardEvent, useState, useRef, useEffect } from "react";
+import React, { KeyboardEvent, useState, useRef, useEffect } from "react";
 import { AIMessageType, RoleEnum, WorkFlowTaskEnum } from "../types";
 import Track from "./models/Track";
 import { WorkFlow } from "../services/ai/core/workflow";
 import { GetIngredientInformation } from "../services/ai/getIngredientInformation";
 
-export default function TrackPanel({ track }: { track: Track }) {
+export default function TrackPanel({ track, tracks, setTracks }: { track: Track, tracks: Array<Track>, setTracks: (tracks: Array<Track>) => void,
+ }) {
   const workflowRef = useRef<WorkFlow | null>(null);
   const [text, setText] = useState('');
   const [messages, setMessages] = useState<AIMessageType[]>([]);
@@ -32,7 +33,7 @@ export default function TrackPanel({ track }: { track: Track }) {
         "NON_INGREDIENT": {checkDescription: "No es un ingrediente", nextStateName: "START"}
       }
       },
-      {type: WorkFlowTaskEnum.AI_AUTO_TASK, prompt: "Traduce el nombre en ingles, solo devuelve el nombre nada más", name: "IS_INGREDIENT", nextStateName: "LAST"},
+      {type: WorkFlowTaskEnum.AI_AUTO_TASK, prompt: "Translate to English only the name between the vertical bars. Respond with the translated name only.", name: "IS_INGREDIENT", nextStateName: "LAST"},
       {type: WorkFlowTaskEnum.CUSTOM_TASK, custom_type: "GetIngredientInformation", name: "LAST", nextStateName: null},
     ])
     .build();
@@ -61,6 +62,12 @@ export default function TrackPanel({ track }: { track: Track }) {
 
     setMessages(prev => [...prev, userMessage]);
     workflowRef.current?.setUserInput(text);
+
+    const updatedTracks = tracks.map(t => 
+      t.id === track.id ? { ...t, name: text } : t
+    );
+    setTracks(updatedTracks);
+
     setText('');
     setDisabled(true);
 
@@ -74,14 +81,14 @@ export default function TrackPanel({ track }: { track: Track }) {
           <div className="flex flex-col gap-2 flex-1">
             {messages.map((message, index) => (
               <p
-                key={index}
+                key={`${message.role}-${index}`} // Updated key to include role and index for uniqueness
                 className={`p-2 rounded max-w-[75%] ${message.role === 'user' ? 'bg-blue-500 text-white self-end' : 'bg-gray-100 text-black self-start'}`}
               >
-                {message.content.split('\n').map(text => (
-                  <>
+                {message.content.split('\n').map((text, i) => (
+                  <React.Fragment key={i}> {/* Added key for nested map */}
                     {text}
                     <br />
-                  </>
+                  </React.Fragment>
                 ))}
               </p>
             ))}

@@ -17,7 +17,7 @@ export default function Layout() {
           <Header setMenuOpen={setMenuOpen} />
           <div className="mt-6 flex-1">
             
-            {selectedTrack ? <TrackPanel track={selectedTrack} /> : <Home />}
+            {selectedTrack ? <TrackPanel  tracks={tracks} setTracks={setTracks} track={selectedTrack} /> : <Home />}
             
           </div>
         </main>

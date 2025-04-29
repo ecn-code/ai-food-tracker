@@ -1,4 +1,4 @@
-import { AIMessageType, RoleEnum } from "../../types";
+import { AIMessageType } from "../../types";
 
 export default class Track {
     id: string;
@@ -15,13 +15,5 @@ export default class Track {
         this.conversation = [];
         this.messages = [];
         this.selected = false;
-    }
-
-    getLastMessage() {
-        return this.messages[this.messages.length - 1].content;
-    }
-
-    getLastConversationMessage(): AIMessageType {
-        return this.conversation[this.conversation.length - 1];
     }
 }
