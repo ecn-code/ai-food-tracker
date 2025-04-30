@@ -6,11 +6,13 @@ import { State } from "./state";
 export class AIGate extends State {
 
     private branches: Map<string, BranchDef>;
+    private prompt: string;
 
     constructor(stateDef: StateDef, context: Context) {
         super(stateDef, context);
 
         const aiGateDef = stateDef as AIGateState;
+        this.prompt = aiGateDef.prompt;
         this.branches = new Map<string, BranchDef>(Object.entries(aiGateDef.branches));
     }
 
@@ -21,7 +23,9 @@ export class AIGate extends State {
             Message:
             |${this.context.getUserMessage()}|
 
-            Evaluate the message: which of these options fits?:
+            Task: ${this.prompt}
+
+            Options:
                 [${Array.from(this.branches.entries()).map(entry => `${entry[0]} -> ${entry[1].checkDescription}\n`)}]
 
             Respond with a JSON object and nothing else:

@@ -10,8 +10,6 @@ export default function Header({ setMenuOpen }: { setMenuOpen: (state: boolean) 
                 <Menu size={20} />
             </button>
             <nav aria-label="Main Navigation" className="flex gap-4">
-                <a href="#" className="text-blue-600 font-semibold hover:text-blue-800 transition-colors">Tracking</a>
-                <a href="#" className="text-blue-600 font-semibold hover:text-blue-800 transition-colors">Dashboard</a>
                 <a href="#" className="text-blue-600 font-semibold hover:text-blue-800 transition-colors">Configuration</a>
             </nav>
         </header>

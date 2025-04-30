@@ -28,12 +28,12 @@ export default function TrackPanel({ track, tracks, setTracks }: { track: Track,
     .registerState("GetIngredientInformation", GetIngredientInformation)
     .states([
       {type: WorkFlowTaskEnum.USER_INPUT, feedback: "Introduce un ingrediente", name: "START", nextStateName: 'VALIDAR'},
-      {type: WorkFlowTaskEnum.AI_GATE, prompt: "¿Es un ingrediente?", name: "VALIDAR", branches: {
+      {type: WorkFlowTaskEnum.AI_GATE, prompt: "Determine whether the text between the bars is an ingredient used in cooking or food preparation.", name: "VALIDAR", branches: {
         "INGREDIENT": {checkDescription: "Es un ingrediente", nextStateName: "IS_INGREDIENT"},
         "NON_INGREDIENT": {checkDescription: "No es un ingrediente", nextStateName: "START"}
       }
       },
-      {type: WorkFlowTaskEnum.AI_AUTO_TASK, prompt: "Translate to English only the name between the vertical bars. Respond with the translated name only.", name: "IS_INGREDIENT", nextStateName: "LAST"},
+      {type: WorkFlowTaskEnum.AI_AUTO_TASK, prompt: "Translate to English only or rename if it needed the name between the vertical bars. Respond with the translated name only.", name: "IS_INGREDIENT", nextStateName: "LAST"},
       {type: WorkFlowTaskEnum.CUSTOM_TASK, custom_type: "GetIngredientInformation", name: "LAST", nextStateName: null},
     ])
     .build();

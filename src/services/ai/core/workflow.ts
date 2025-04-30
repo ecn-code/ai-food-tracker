@@ -1,5 +1,5 @@
 import { Constructor, StateDef, WorkFlowTaskEnum } from "../../../types";
-import { OllamaService } from "../ollama-service";
+import { OllamaService } from "../services/ollama-service";
 import { Context } from "../workflow/context";
 import { AIAutoTask } from "./aiAutoTask";
 import { AIGate } from "./aiGate";

@@ -41,11 +41,11 @@ export default function LeftPanel({ menuOpen, setMenuOpen, tracks, setTracks, se
                     <h2 className="text-gray-300 text-sm uppercase">Actions</h2>
                     <a href="#" className="inline-flex items-center p-2 rounded hover:bg-gray-700 transition-colors">
                         <Plus size={12} />
-                        <span onClick={addTrackDay} className="ml-2">Track a new day</span>
+                        <span onClick={addTrackDay} className="ml-2">Analyze a new ingredient</span>
                     </a>
                 </section>
                 <section className="border-t border-gray-600 pt-4">
-                    <h2 className="text-gray-300 text-sm uppercase">Days</h2>
+                    <h2 className="text-gray-300 text-sm uppercase">Ingredients</h2>
                     {
                         tracks.map((track) => {
                             return (

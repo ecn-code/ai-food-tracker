@@ -6,7 +6,7 @@ export default function Home() {
     return (
         <>
             <h1 className="text-2xl font-bold">{t('dashboard_overview')}</h1>
-            <p className="text-gray-600">Here you can track and manage your data efficiently.</p>
+            <p className="text-gray-600">Discover the nutritional values of your favorite ingredients and make informed choices.</p>
         </>
     );
 }

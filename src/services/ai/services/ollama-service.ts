@@ -1,5 +1,5 @@
-import { AIMessageType } from "../../types";
-import type { AIService } from "./ai-service";
+import { AIMessageType } from "../../../types";
+import type { AIService } from "../core/aiService";
 
 export class OllamaService implements AIService {
 
