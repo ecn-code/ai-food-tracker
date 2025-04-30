@@ -1,54 +1,84 @@
-# React + TypeScript + Vite
+# AI Food Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is an AI-powered workflow designed to retrieve nutritional values for ingredients. It interacts with users to validate their input, translates the ingredient names to English, and queries the FoodData Central API from the USDA to fetch detailed nutritional information.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Ingredient Validation**: Ensures the user-provided input is a valid ingredient.
+- **Translation**: Translates ingredient names to English for better API compatibility.
+- **Nutritional Data Retrieval**: Fetches detailed nutritional information from the FoodData Central API.
+- **Interactive Workflow**: Guides users through a conversational interface to refine their input and provide accurate results.
+- **Pluggable AI Client**: Uses Ollama, a local AI service, for processing. Other AI clients can be implemented by adhering to the client interface.
 
-## Expanding the ESLint configuration
+## Technologies Used
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **React**: Frontend framework for building the user interface.
+- **TypeScript**: Ensures type safety and better developer experience.
+- **Vite**: Development environment for fast builds and hot module replacement.
+- **Tailwind CSS**: For styling the application.
+- **i18next**: Handles internationalization.
+- **FoodData Central API**: Provides nutritional data for ingredients.
+- **Ollama**: Local AI service for processing user input and workflow tasks.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## How It Works
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+1. **User Input**: The user writes an ingredient.
+2. **Validation**: The system checks if the input is a valid ingredient.
+3. **Translation**: If valid, the ingredient name is translated to English.
+4. **API Query**: The translated name is used to query the FoodData Central API.
+5. **API Response Evaluation**: The system evaluates the API response to identify and select the most accurate match for the ingredient.
+6. **Nutritional Data Presentation**: The system processes the API response for the selected ingredient and presents the nutritional information to the user.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Setup Instructions
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd ai-food-tracker
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Set up the environment variables:
+   - Copy `.env.example` to `.env`.
+   - Add your FoodData Central API key to the `VITE_APP_FDC_API_KEY` variable.
+
+4. Ensure Ollama is running:
+   - Start the Ollama service locally. Refer to the Ollama documentation for setup instructions.
+
+5. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+6. Open the application in your browser at `http://localhost:3000`.
+
+## Scripts
+
+- `npm run dev`: Starts the development server.
+- `npm run build`: Builds the application for production.
+- `npm run preview`: Previews the production build.
+- `npm run lint`: Runs ESLint to check for code quality issues.
+
+## Folder Structure
+
+- `src/components`: Contains React components for the UI.
+- `src/services`: Includes AI workflows and API interaction logic.
+- `src/types.ts`: Defines TypeScript types used across the project.
+- `locales`: Stores translation files for internationalization.
+
+## Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bugfix.
+3. Commit your changes with clear and concise messages.
+4. Submit a pull request.
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
